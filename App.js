@@ -12,7 +12,8 @@ export default function App() {
   const [cameraPermissions, setCameraPermissions] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [picNotes, setPicNotes] = useState([]);
-  const [displayCamera, setDisplayCamera] = useState(true);
+  const [displayCamera, setDisplayCamera] = useState(false);
+  const [displayLastPic, setDisplayLastPic] = useState(false);
   const [testImage, setTestImage] = useState();
   const ref = useRef(null);
   
@@ -32,6 +33,10 @@ export default function App() {
     }
   }
 
+  const openCamera = () => {
+    setDisplayCamera(true);
+  }
+
   const takePicture = async (imageDescription) => {       
     console.log('Taking Picture Now');
     const photo = await ref.current.takePictureAsync();
@@ -41,6 +46,8 @@ export default function App() {
     let newNote = { uri: photo.uri, description: imageDescription };
     console.log({newNote});
     setPicNotes([...picNotes, newNote]);
+    setDisplayCamera(false);
+    setDisplayLastPic(true);
   }
 
   useEffect (()=> {
@@ -60,20 +67,36 @@ export default function App() {
   
     return (
       <View style={styles.container}>
-        <Text>
+        <Text style={styles.welcome}>
           Welcome to PicNote
         </Text>
-        <Camera style={styles.cameraView} type={type} ref={ref}>
-          <TouchableOpacity onPress={takePicture}>
-          </TouchableOpacity>
-        </Camera>
-        <TextInput type="text" placeholder="Enter Description Here"></TextInput>
         <Button 
-          onPress ={()=> takePicture()}
-          title="Capture Picture"
-        ></Button>
-        <Image source={{ uri: 'file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540paneks19%252Ffirst-mobile-app/Camera/c0d5e35a-dff6-46a3-8147-b3ed1df643f3.jpg' }} style={{width: 100, height: 150 }}/>
-        <StatusBar style="auto" />
+          onPress={openCamera}
+          title="Open Camera"
+        >Add PicNote</Button>
+        <View>
+          { (!displayCamera) ? <Text></Text> :
+          <View>
+            <Camera style={styles.cameraView} type={type} ref={ref}>
+              <TouchableOpacity onPress={takePicture}>
+              </TouchableOpacity>
+            </Camera>
+            <TextInput type="text" placeholder="Enter Description Here"></TextInput>
+            <Button 
+              onPress ={()=> takePicture()}
+              title="Capture Picture"
+            ></Button> 
+          </View>
+          } 
+        </View>
+        <View>
+          { (!displayLastPic) ? <Text></Text> : 
+          <View>
+            <Image source={{ uri: `${picNotes[picNotes.length-1].uri}` }} style={{width: 100, height: 150 }}/>
+                <StatusBar style="auto" />
+            </View>
+          }
+          </View>
       </View>
     );
   }
@@ -93,8 +116,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }, 
   cameraView: {
-    width: '70%',
-    height: '70%'
+    // width: '65%',
+    height: '55%'
+  },
+  welcome: {
+    fontSize: 18,
+    margin: '5%'
   }
 });
 
