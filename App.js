@@ -14,7 +14,12 @@ export default function App() {
   const [picNotes, setPicNotes] = useState([]);
   const [displayCamera, setDisplayCamera] = useState(false);
   const [displayLastPic, setDisplayLastPic] = useState(false);
+  const [displayCameraButton, setDisplayCameraButton] = useState(true);
+  const [displayViewNotes, setDisplayViewNotes] = useState(true);
+  const [displayAllNotes, setDisplayAllNotes] = useState(false);
   const [testImage, setTestImage] = useState();
+  const [description, setDescription] = useState('');
+  const [completeNotes, setCompleteNotes] = useState([]);
   const ref = useRef(null);
   
   const getPermissions =  async () => {
@@ -35,6 +40,14 @@ export default function App() {
 
   const openCamera = () => {
     setDisplayCamera(true);
+    setDisplayCameraButton(false);
+    setDisplayViewNotes(false);
+    setDisplayAllNotes(false);
+  }
+
+  const viewNotes = () => {
+    setDisplayViewNotes(false);
+    setDisplayAllNotes(true);
   }
 
   const takePicture = async (imageDescription) => {       
@@ -50,8 +63,23 @@ export default function App() {
     setDisplayLastPic(true);
   }
 
+  const submitDescription = () => {
+    console.log({description});
+    setDisplayCamera(false);
+    setDisplayLastPic(false);
+    setDisplayCameraButton(true);
+    setDisplayViewNotes(true);
+
+    let newNoteUri = picNotes[picNotes.length-1].uri;
+    let newNoteDescription = description;
+    let newNote = {uri: newNoteUri, description: newNoteDescription};
+    setCompleteNotes([...completeNotes, newNote]);
+  }
+
   useEffect (()=> {
     console.log('State: picNotes ', picNotes);
+    console.log('State: description ', description);
+    console.log('State: completeNotes ', completeNotes);
   })
 
   useEffect (() => {
@@ -70,10 +98,22 @@ export default function App() {
         <Text style={styles.welcome}>
           Welcome to PicNote
         </Text>
-        <Button 
-          onPress={openCamera}
-          title="Open Camera"
-        >Add PicNote</Button>
+        <View>
+          { (!displayCameraButton) ? <Text></Text> : 
+          <Button 
+            onPress={openCamera}
+            title="Add PicNote"
+          ></Button>
+          }
+        </View>
+        <View>
+          { (!displayViewNotes) ? <Text></Text> : 
+          <Button 
+            onPress={viewNotes}
+            title="View Notes"
+          ></Button>
+          }
+        </View>
         <View>
           { (!displayCamera) ? <Text></Text> :
           <View>
@@ -81,7 +121,6 @@ export default function App() {
               <TouchableOpacity onPress={takePicture}>
               </TouchableOpacity>
             </Camera>
-            <TextInput type="text" placeholder="Enter Description Here"></TextInput>
             <Button 
               onPress ={()=> takePicture()}
               title="Capture Picture"
@@ -94,8 +133,23 @@ export default function App() {
           <View>
             <Image source={{ uri: `${picNotes[picNotes.length-1].uri}` }} style={{width: 100, height: 150 }}/>
                 <StatusBar style="auto" />
+                <TextInput 
+                  style={{ height: 25, width: '150%', borderColor: 'black', borderWidth: 1 }}
+                  placeholder="Enter Description Here"
+                  onChangeText={text => setDescription(text)}
+                  value={description}
+                />
+                <Button 
+                  onPress={submitDescription}
+                  title='Submit Description'
+                ></Button>
             </View>
           }
+          </View>
+          <View>
+            { (!displayAllNotes) ? <Text></Text> : 
+            <Text>All Notes Should Render Here</Text>
+            }
           </View>
       </View>
     );
