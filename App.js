@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Button, FlatList, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, Linking, TouchableOpacity, TextInput, Image } from 'react-native';
 // import * as Contacts from 'expo-contacts';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
@@ -11,6 +11,9 @@ export default function App() {
   // const [Permissions, setPermissions] = useState(false);
   const [cameraPermissions, setCameraPermissions] = useState(false);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [picNotes, setPicNotes] = useState([]);
+  const [displayCamera, setDisplayCamera] = useState(true);
+  const [testImage, setTestImage] = useState();
   const ref = useRef(null);
   
   const call = (contact) => {
@@ -54,27 +57,24 @@ export default function App() {
     }
   }
 
-  // const takePicture = async () => {
-  //   console.log('Taking Picture Now');
-  //   await onCameraReady();
-  //   await takePictureAsync();
-  // }
-
-  const takePicture = async () => {       
+  const takePicture = async (imageDescription) => {       
     console.log('Taking Picture Now');
     const photo = await ref.current.takePictureAsync();
     console.log({photo});
     console.log('Photo taken and should have been logged before this message');
-    // if (camera) {
-    //    console.log('Taking photo');
-    //    const options = { quality: 1, base64: true, fixOrientation: true, 
-    //    exif: true};
-    //    await camera.takePictureAsync(options).then(photo => {
-    //       photo.exif.Orientation = 1;            
-    //        console.log(photo);            
-    //        });     
-    //  }
-    }
+
+    let newNote = { uri: photo.uri, description: imageDescription };
+
+    console.log({newNote});
+    
+    setTestImage({uri: photo.uri});
+    setPicNotes([...picNotes, newNote]);
+    setDisplayCamera(false);
+  }
+
+  useEffect (()=> {
+    console.log('State: picNotes ', picNotes);
+  })
 
   useEffect (() => {
     getPermissions();
@@ -109,31 +109,33 @@ export default function App() {
       keyExtractor={(item) => item.id} 
       renderItem={({item})=> <Button title={item.name} onPress={() => call(item)} />}
     ></FlatList> */}
-   
-    <Camera style={styles.cameraView} type={type} ref={ref}>
-      <TouchableOpacity onPress={takePicture}>
-      {/* <View> */}
-        {/* <TouchableOpacity
-          onPress={() => {
-            setType(
-              type === Camera.Constants.Type.back
-              ? Camera.Constants.Type.front
-              : Camera.Constants.Type.back
-              );
-            }}>
-            <Text>Flip</Text>
-          </TouchableOpacity> */}
-      {/* </View> */}
-          {/* <Text>
-            Capture Picture
-          </Text> */}
-        </TouchableOpacity>
-      </Camera>
-      <Button 
-      onPress ={()=> takePicture()}
-      title="Capture Picture"
-    ></Button>
-
+    
+      <Camera style={styles.cameraView} type={type} ref={ref}>
+        <TouchableOpacity onPress={takePicture}>
+        {/* <View> */}
+          {/* <TouchableOpacity
+            onPress={() => {
+              setType(
+                type === Camera.Constants.Type.back
+                ? Camera.Constants.Type.front
+                : Camera.Constants.Type.back
+                );
+              }}>
+              <Text>Flip</Text>
+            </TouchableOpacity> */}
+        {/* </View> */}
+            {/* <Text>
+              Capture Picture
+            </Text> */}
+          </TouchableOpacity>
+        </Camera>
+        <TextInput type="text" placeholder="Enter Description Here"></TextInput>
+        <Button 
+        onPress ={()=> takePicture()}
+        title="Capture Picture"
+      ></Button>
+      <Image source={{testImage}} />
+    
       <StatusBar style="auto" />
     </View>
   );
@@ -154,8 +156,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }, 
   cameraView: {
-    width: '80%',
-    height: '80%'
+    width: '70%',
+    height: '70%'
   }
 });
 
