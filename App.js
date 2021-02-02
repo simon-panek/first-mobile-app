@@ -20,6 +20,7 @@ export default function App() {
   const [testImage, setTestImage] = useState();
   const [description, setDescription] = useState('');
   const [completeNotes, setCompleteNotes] = useState([]);
+  const [totalNotes, setTotalNotes] = useState(0);
   const ref = useRef(null);
   
   const getPermissions =  async () => {
@@ -70,10 +71,12 @@ export default function App() {
     setDisplayCameraButton(true);
     setDisplayViewNotes(true);
 
+    let newNoteID = totalNotes + 1;
     let newNoteUri = picNotes[picNotes.length-1].uri;
     let newNoteDescription = description;
-    let newNote = {uri: newNoteUri, description: newNoteDescription};
+    let newNote = {id: newNoteID, uri: newNoteUri, description: newNoteDescription};
     setCompleteNotes([...completeNotes, newNote]);
+    setTotalNotes(newNoteID);
   }
 
   useEffect (()=> {
@@ -148,7 +151,19 @@ export default function App() {
           </View>
           <View>
             { (!displayAllNotes) ? <Text></Text> : 
-            <Text>All Notes Should Render Here</Text>
+            <View>
+              <FlatList
+                data={completeNotes}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={(item, idx)=>  
+                  <View>
+                    <Image source={{ uri: `${item.uri}` }} style={{width: 100, height: 150 }}/>
+                    <Text>{item.description}</Text>
+                    <Text>Is this working?</Text>
+                  </View>
+                }
+              ></FlatList>
+            </View>
             }
           </View>
       </View>
