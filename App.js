@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, Button, FlatList, Linking, TouchableOpacity, Te
 // import * as Contacts from 'expo-contacts';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
+import { CachedImage, CacheManager } from 'react-native-expo-image-cache';
+import * as FileSystem from 'expo-file-system';
 
 export default function App() {
   const [name, setName] = useState('');
@@ -63,13 +65,22 @@ export default function App() {
     console.log({photo});
     console.log('Photo taken and should have been logged before this message');
 
+    let URI = photo.uri;
+
     let newNote = { uri: photo.uri, description: imageDescription };
 
     console.log({newNote});
     
-    setTestImage({uri: photo.uri});
+    // setTestImage({uri: photo.uri});
     setPicNotes([...picNotes, newNote]);
-    setDisplayCamera(false);
+    // setDisplayCamera(false);
+
+    // const filesystemURI = await FileSystem.getImageFilesystemKey(URI);
+    // await FileSystem.loadImage(filesystemURI, URI)
+
+    // const path = await CacheManager.get(URI).getPath();
+
+    // console.log({path});
   }
 
   useEffect (()=> {
@@ -134,8 +145,11 @@ export default function App() {
         onPress ={()=> takePicture()}
         title="Capture Picture"
       ></Button>
-      <Image source={{testImage}} />
-    
+        
+          {/* <Image source={{cache: 'force-cache'}} /> */}
+
+        <Image source={{ uri: 'file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540paneks19%252Ffirst-mobile-app/Camera/c0d5e35a-dff6-46a3-8147-b3ed1df643f3.jpg' }} style={{width: 100, height: 150 }}/>
+        
       <StatusBar style="auto" />
     </View>
   );
