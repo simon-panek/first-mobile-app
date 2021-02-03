@@ -31,6 +31,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": ""
+    "description": "Simple app to store pictures with user-provided descriptions."
   }
 }
