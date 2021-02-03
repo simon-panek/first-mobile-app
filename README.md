@@ -1,4 +1,4 @@
-# Project: PicNote
+# PicNote
 
 ### Author
 
@@ -26,7 +26,7 @@ Also available via the following QR code
 4. Run $`npm start` in your terminal
 5. If you are developing using an Android or iOS emulator select either of those from the Expo development window or scan the QR code to test on your mobile device
 
-#### Warning
+#### Note
 
 This app requires the use of a camera and needs user permission to function properly. Also, since a camera is required for use, neither emulators or web development will allow for fully testing the functionality.
 
