@@ -77,6 +77,7 @@ export default function App() {
     let newNote = {id: newNoteID, uri: newNoteUri, description: newNoteDescription};
     setCompleteNotes([...completeNotes, newNote]);
     setTotalNotes(newNoteID);
+    setDescription('');
   }
 
   useEffect (()=> {
@@ -100,6 +101,9 @@ export default function App() {
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to PicNote
+        </Text>
+        <Text style={styles.totalNotes}>
+          Notes: {totalNotes}
         </Text>
         <View>
           { (!displayCameraButton) ? <Text></Text> : 
@@ -133,11 +137,11 @@ export default function App() {
         </View>
         <View>
           { (!displayLastPic) ? <Text></Text> : 
-          <View>
+          <View style={styles.descriptionStyle}>
             <Image source={{ uri: `${picNotes[picNotes.length-1].uri}` }} style={{width: 100, height: 150 }}/>
                 <StatusBar style="auto" />
                 <TextInput 
-                  style={{ height: 25, width: '150%', borderColor: 'black', borderWidth: 1 }}
+                  style={{ height: '15%', width: '150%', borderColor: 'black', borderWidth: 1 }}
                   placeholder="Enter Description Here"
                   onChangeText={text => setDescription(text)}
                   value={description}
@@ -155,17 +159,19 @@ export default function App() {
               <FlatList
                 data={completeNotes}
                 keyExtractor={(item) => item.id.toString()}
-                renderItem={(item, idx)=>  
-                  <View>
-                    <Image source={{ uri: `${item.uri}` }} style={{width: 100, height: 150 }}/>
-                    <Text>{item.description}</Text>
-                    <Text>Is this working?</Text>
-                  </View>
+                renderItem={(item, idx)=> {
+                  return ( <View>
+                    <Image source={{ uri: `${item.item.uri}` }} style={{width: 200, height: 300 }}/>
+                    <Text style={styles.listText}>{item.item.description}</Text>
+                  </View> )}
                 }
               ></FlatList>
             </View>
             }
           </View>
+          <Text>
+            &copy; 2021 SP
+          </Text>
       </View>
     );
   }
@@ -174,10 +180,11 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ada5a5',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: '5%',
+    width: '100%'
   },
   text: {
     marginTop: '15%',
@@ -185,12 +192,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }, 
   cameraView: {
-    // width: '65%',
-    height: '55%'
+    alignSelf: 'center',
+    width: '170%',
+    height: '85%'
   },
   welcome: {
     fontSize: 18,
     margin: '5%'
+  }, 
+  listText: {
+    textAlign: 'center',
+    margin: '2.5%', 
+    marginBottom: '10%'
+  },
+  totalNotes: {
+    margin: '10%',
+    marginTop: '20%',
+    textAlign: 'center'
+  },
+  footer: {
+    marginBottom: '15%'
+  },
+  descriptionStyle: {
+    alignItems: 'center'
   }
 });
 
